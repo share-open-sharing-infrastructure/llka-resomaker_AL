@@ -5,7 +5,6 @@ import type {
   LimitsConfig,
   DefaultsConfig,
   DisplayConfig,
-  OpeningHoursConfig,
 } from "./types";
 
 export const DEFAULT_BRAND: BrandConfig = {
@@ -49,10 +48,3 @@ export const DEFAULT_DISPLAY: DisplayConfig = {
 
 export const DEFAULT_HOURS_JSON =
   '{"1":"15:00-19:00","4":"15:00-19:00","5":"15:00-19:00","6":"10:00-14:00"}';
-
-export const DEFAULT_HOURS: OpeningHoursConfig = {
-  1: { open: 15, close: 19 },
-  4: { open: 15, close: 19 },
-  5: { open: 15, close: 19 },
-  6: { open: 10, close: 14 },
-};

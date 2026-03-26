@@ -5,7 +5,6 @@ import {
   DEFAULT_LIMITS,
   DEFAULT_DEFAULTS,
   DEFAULT_DISPLAY,
-  DEFAULT_HOURS,
   DEFAULT_HOURS_JSON,
 } from "./defaults";
 
@@ -50,7 +49,7 @@ function parseHours(json: string): OpeningHoursConfig {
 
     return result;
   } catch {
-    return DEFAULT_HOURS;
+    return {};
   }
 }
 

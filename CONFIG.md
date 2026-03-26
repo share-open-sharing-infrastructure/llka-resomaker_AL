@@ -18,6 +18,9 @@ cp .env.local .env.local.backup
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `NEXT_PUBLIC_API_BASE` | (required) | PocketBase API URL |
+| `NEXT_PUBLIC_BASE_PATH` | (empty) | Sub-path prefix when app is not served at `/` (e.g., `/reservierung`) |
+
+> **Images:** Next.js Image `remotePatterns` are derived automatically from `NEXT_PUBLIC_API_BASE`. In development, `localhost` is also allowed. No manual `next.config.ts` edits are needed.
 
 ### Branding
 

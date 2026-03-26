@@ -1,6 +1,7 @@
 import { ApiError } from "@/lib/types/reservation";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "";
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 // Use proxy in browser to avoid CORS, direct on server
 const getProxyUrl = (endpoint: string) => {
@@ -8,8 +9,8 @@ const getProxyUrl = (endpoint: string) => {
     // Server-side: call API directly
     return `${API_BASE}${endpoint}`;
   }
-  // Client-side: use proxy to avoid CORS
-  return `/api/proxy${endpoint}`;
+  // Client-side: use proxy to avoid CORS (respects basePath)
+  return `${BASE_PATH}/api/proxy${endpoint}`;
 };
 
 export class ApiClientError extends Error {

@@ -147,13 +147,21 @@ See [leih-lokal/leihbackend](https://github.com/leih-lokal/leihbackend) for the 
 
 ## Deployment
 
-### Static Export
+### Standalone
 
 ```bash
-npm run build
+npm run build:standalone
 ```
 
-Deploy the `.next/standalone` directory.
+This builds the app and copies the required static assets into `.next/standalone/`. Deploy the `.next/standalone` directory and start with `node .next/standalone/server.js`.
+
+### Sub-Path Deployment
+
+To serve the app under a sub-path (e.g., `https://example.com/reservierung`), set:
+
+```env
+NEXT_PUBLIC_BASE_PATH=/reservierung
+```
 
 ### Docker
 

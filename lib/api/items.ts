@@ -2,6 +2,21 @@ import { fetchApi } from "./client";
 import { Item, ItemsResponse } from "@/lib/types/item";
 import { config } from "@/lib/config";
 
+function normalizeItem(item: Item): Item {
+  let category = (item as unknown as { category: unknown }).category;
+  if (typeof category === 'string') {
+    try {
+      const parsed = JSON.parse(category);
+      category = Array.isArray(parsed) ? parsed : [category];
+    } catch {
+      // Not JSON — treat as single category or empty if blank
+      category = category ? [category] : [];
+    }
+  }
+  if (!Array.isArray(category)) category = [];
+  return { ...item, category: category as string[] };
+}
+
 export async function getItems(
   page: number = 1,
   perPage: number = 30,
@@ -31,13 +46,15 @@ export async function getItems(
     perPage: perPage.toString(),
   });
 
-  return fetchApi<ItemsResponse>(
+  const raw = await fetchApi<ItemsResponse>(
     `/api/collections/item_public/records?${params.toString()}`
   );
+  return { ...raw, items: raw.items.map(normalizeItem) };
 }
 
 export async function getItem(id: string): Promise<Item> {
-  return fetchApi<Item>(`/api/collections/item_public/records/${id}`);
+  const raw = await fetchApi<Item>(`/api/collections/item_public/records/${id}`);
+  return normalizeItem(raw);
 }
 
 export async function getItemByIid(iid: number): Promise<Item | null> {
@@ -50,5 +67,5 @@ export async function getItemByIid(iid: number): Promise<Item | null> {
     `/api/collections/item_public/records?${params.toString()}`
   );
 
-  return response.items.length > 0 ? response.items[0] : null;
+  return response.items.length > 0 ? normalizeItem(response.items[0]) : null;
 }

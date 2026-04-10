@@ -45,7 +45,9 @@ export function CartItem({ item, onRemove }: CartItemProps) {
 
       <div className="flex-1 min-w-0 py-1">
         <h4 className="font-medium leading-tight">{name}</h4>
-        <p className="text-sm text-muted-foreground mt-1">{item.category}</p>
+        {item.category && item.category.length > 0 && (
+          <p className="text-sm text-muted-foreground mt-1">{item.category.join(', ')}</p>
+        )}
         {item.deposit > 0 && (
           <p className="text-sm font-medium mt-1">{item.deposit}&euro;</p>
         )}

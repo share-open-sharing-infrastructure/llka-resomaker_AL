@@ -33,7 +33,7 @@ export interface Item {
   status: ItemStatus;
   deposit: number;
   synonyms: string;
-  category: string;
+  category: string[];
   brand: string;
   model: string;
   packaging: string;

@@ -140,8 +140,8 @@ export function ItemDetail({ item }: ItemDetailProps) {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold">{name}</h1>
-          {item.category && (
-            <p className="text-lg text-muted-foreground mt-1">{item.category}</p>
+          {item.category && item.category.length > 0 && (
+            <p className="text-lg text-muted-foreground mt-1">{item.category.join(', ')}</p>
           )}
         </div>
 

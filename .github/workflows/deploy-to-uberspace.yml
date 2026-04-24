@@ -34,13 +34,12 @@ jobs:
         run: |
           mkdir -p deploy
 
-          # Find where server.js ended up (standalone nests by project path)
-          SERVER_DIR=$(find .next/standalone -name "server.js" -exec dirname {} \;)
+          # Find the standalone server.js (exclude node_modules to avoid false matches)
+          SERVER_DIR=$(find .next/standalone -name "server.js" -not -path "*/node_modules/*" -exec dirname {} \;)
           echo "Found server.js in: $SERVER_DIR"
 
           # Copy server core (server.js, package.json, node_modules, .next server files)
-          cp -r "$SERVER_DIR"/* deploy/
-          cp -r "$SERVER_DIR"/.next deploy/
+          cp -r "$SERVER_DIR"/. deploy/
 
           # Copy static assets into deploy/.next/static
           cp -r .next/static deploy/.next/
@@ -55,6 +54,7 @@ jobs:
           test -f deploy/server.js && echo "server.js found" || echo "server.js MISSING"
           test -d deploy/.next/static && echo ".next/static found" || echo ".next/static MISSING"
           test -d deploy/public && echo "public found" || echo "public MISSING"
+
 
       - name: Set up SSH
         run: |

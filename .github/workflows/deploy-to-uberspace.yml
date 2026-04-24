@@ -1,0 +1,77 @@
+name: Build & Deploy to Uberspace
+
+on:
+  push:
+    branches:
+      - main
+      - feat/workflow
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        env:
+          NEXT_PUBLIC_API_BASE: ${{ secrets.RESOMAKER_API_BASE }}
+          NEXT_PUBLIC_BASE_PATH: ${{ secrets.RESOMAKER_BASE_PATH }}
+        run: npm run build
+
+      - name: Assemble deployment directory
+        run: |
+          mkdir -p deploy
+
+          # Find where server.js ended up (standalone nests by project path)
+          SERVER_DIR=$(find .next/standalone -name "server.js" -exec dirname {} \;)
+          echo "Found server.js in: $SERVER_DIR"
+
+          # Copy server core (server.js, package.json, node_modules, .next server files)
+          cp -r "$SERVER_DIR"/* deploy/
+          cp -r "$SERVER_DIR"/.next deploy/
+
+          # Copy static assets into deploy/.next/static
+          cp -r .next/static deploy/.next/
+
+          # Copy public directory
+          cp -r public deploy/
+
+          # Verify structure
+          echo "--- Deploy directory structure ---"
+          ls -la deploy/
+          ls -la deploy/.next/
+          test -f deploy/server.js && echo "server.js found" || echo "server.js MISSING"
+          test -d deploy/.next/static && echo ".next/static found" || echo ".next/static MISSING"
+          test -d deploy/public && echo "public found" || echo "public MISSING"
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.RESOMAKER_UBERSPACE_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "${{ secrets.RESOMAKER_UBERSPACE_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy via rsync
+        run: |
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            ./deploy/ \
+            ${{ secrets.RESOMAKER_UBERSPACE_USER }}@${{ secrets.RESOMAKER_UBERSPACE_HOST }}:~/resomaker/
+
+      - name: Restart application
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ secrets.RESOMAKER_UBERSPACE_USER }}@${{ secrets.RESOMAKER_UBERSPACE_HOST }} \
+            "supervisorctl restart resomaker"

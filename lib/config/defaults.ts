@@ -47,4 +47,4 @@ export const DEFAULT_DISPLAY: DisplayConfig = {
 };
 
 export const DEFAULT_HOURS_JSON =
-  '{"1":"15:00-19:00","4":"15:00-19:00","5":"15:00-19:00","6":"10:00-14:00"}';
+  '{"7":"11:00-15:00"}';

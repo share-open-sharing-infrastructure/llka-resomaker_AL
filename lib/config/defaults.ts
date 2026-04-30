@@ -8,7 +8,7 @@ import type {
 } from "./types";
 
 export const DEFAULT_BRAND: BrandConfig = {
-  name: "Leihladen im Commonszentrum | powered by Allerleih",
+  name: "Leihladen im Commonszentrum",
   tagline: "Leihen statt kaufen",
   logo: "",
   accent: "#000000",

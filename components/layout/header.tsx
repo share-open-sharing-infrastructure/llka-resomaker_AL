@@ -17,7 +17,7 @@ export function Header() {
         <Link href="/" className="flex items-center space-x-2">
           {config.brand.logo && (
             <img
-              src={config.brand.logo}
+              src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${config.brand.logo}`}
               alt={config.brand.name}
               className="h-8 w-auto"
             />

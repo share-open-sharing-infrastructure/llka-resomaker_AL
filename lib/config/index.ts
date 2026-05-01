@@ -54,18 +54,18 @@ function parseHours(json: string): OpeningHoursConfig {
 }
 
 const brandName = env("BRAND_NAME", DEFAULT_BRAND.name);
-const brandTagline = env("BRAND_TAGLINE", DEFAULT_BRAND.tagline);
+const taglineText = DEFAULT_BRAND.tagline.map((s) => s.text).join("");
 
 export const config: AppConfig = {
   brand: {
     name: brandName,
-    tagline: brandTagline,
+    tagline: DEFAULT_BRAND.tagline,
     logo: env("BRAND_LOGO", DEFAULT_BRAND.logo),
     accent: env("BRAND_ACCENT", DEFAULT_BRAND.accent),
   },
   meta: {
     title:
-      env("META_TITLE", "") || `${brandName} - ${brandTagline}`,
+      env("META_TITLE", "") || `${brandName} - ${taglineText}`,
     description:
       env("META_DESCRIPTION", "") ||
       `Reservieren Sie Gegenstande bei ${brandName} - nachhaltig und gemeinschaftlich.`,

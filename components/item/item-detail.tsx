@@ -184,7 +184,7 @@ export function ItemDetail({ item }: ItemDetailProps) {
           {config.features.deposit && item.deposit > 0 && (
             <div>
               <p className="text-sm text-muted-foreground">Kaution</p>
-              <p className="text-3xl font-bold">{item.deposit}{config.display.currency}</p>
+              <p className="text-3xl font-bold">{item.deposit}{config.display.currency} </p>
             </div>
           )}
 

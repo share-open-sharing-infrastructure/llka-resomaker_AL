@@ -85,8 +85,8 @@ export function ItemCard({ item }: ItemCardProps) {
 
       <CardFooter className="p-4 pt-10 flex items-center justify-between gap-4">
         {config.features.deposit && item.deposit > 0 && (
-          <span className="text-lg font-semibold">
-            {item.deposit}{config.display.currency}
+          <span className="text-sm font-semibold">
+            Kaution: {item.deposit}{config.display.currency}
           </span>
         )}
         {available ? (

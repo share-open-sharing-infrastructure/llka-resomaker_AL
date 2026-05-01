@@ -1,6 +1,11 @@
+export interface TaglineSegment {
+  text: string;
+  url?: string;
+}
+
 export interface BrandConfig {
   name: string;
-  tagline: string;
+  tagline: TaglineSegment[];
   logo: string;
   accent: string;
 }

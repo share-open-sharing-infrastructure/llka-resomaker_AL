@@ -55,7 +55,7 @@ export function CartSummary({ items }: CartSummaryProps) {
               </div>
               {config.features.deposit && item.deposit > 0 && (
                 <Badge variant="secondary" className="shrink-0">
-                  {item.deposit}{config.display.currency}
+                  Kaution: {item.deposit}{config.display.currency} 
                 </Badge>
               )}
             </div>

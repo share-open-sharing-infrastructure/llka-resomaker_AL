@@ -9,9 +9,15 @@ import type {
 
 export const DEFAULT_BRAND: BrandConfig = {
   name: "Leihladen im Commonszentrum",
-  tagline: "Leihen statt kaufen",
+  tagline: [
+    { text: "Ein Projekt von " },
+    { text: "Commons Zentrum Lüneburg", url: "https://commonszentrum.de/" },
+    { text: " und " },
+    { text: "AllerLeih", url: "https://allerleih.org/" },
+    { text: "." },
+  ],
   logo: "",
-  accent: "#000000",
+  accent: "#597ad8",
 };
 
 export const DEFAULT_META: MetaConfig = {

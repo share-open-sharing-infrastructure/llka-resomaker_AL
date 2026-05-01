@@ -11,23 +11,40 @@ export function Footer() {
           <div>
             <h3 className="mb-4 text-lg font-semibold">{config.brand.name}</h3>
             <p className="text-sm text-muted-foreground">
-              {config.brand.tagline}
+              {config.brand.tagline.map((segment, i) =>
+                segment.url ? (
+                  <a
+                    key={i}
+                    href={segment.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-foreground"
+                  >
+                    {segment.text}
+                  </a>
+                ) : (
+                  <span key={i}>{segment.text}</span>
+                )
+              )}
             </p>
           </div>
 
           <div>
             <h3 className="mb-4 text-lg font-semibold">Öffnungszeiten</h3>
             <dl className="space-y-1 text-sm">
-              {hours.map(({ day, hours: time }) => (
+              {hours
+                .filter(({ hours: time }) => time !== "Geschlossen")
+                .map(({ day, hours: time }) => (
                 <div key={day} className="flex justify-between gap-4">
                   <dt className="text-muted-foreground">{day}</dt>
-                  <dd
+                  {/* <dd
                     className={
                       time === "Geschlossen"
                         ? "text-muted-foreground"
                         : "font-medium"
                     }
-                  >
+                  > */}
+                  <dd className="font-medium">
                     {time}
                   </dd>
                 </div>

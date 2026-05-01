@@ -28,6 +28,7 @@ jobs:
         env:
           NEXT_PUBLIC_API_BASE: ${{ secrets.RESOMAKER_API_BASE }}
           NEXT_PUBLIC_BASE_PATH: ${{ secrets.RESOMAKER_BASE_PATH }}
+          NEXT_PUBLIC_FEATURE_ITEM_IDS: false
         run: npm run build
 
       - name: Assemble deployment directory

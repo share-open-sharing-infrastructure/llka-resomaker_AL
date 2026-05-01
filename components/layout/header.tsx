@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,11 +16,9 @@ export function Header() {
       <div className="container flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
           {config.brand.logo && (
-            <Image
+            <img
               src={config.brand.logo}
               alt={config.brand.name}
-              width={120}
-              height={40}
               className="h-8 w-auto"
             />
           )}

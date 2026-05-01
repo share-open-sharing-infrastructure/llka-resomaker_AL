@@ -16,7 +16,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
-          {config.brand.logo ? (
+          {config.brand.logo && (
             <Image
               src={config.brand.logo}
               alt={config.brand.name}
@@ -24,9 +24,8 @@ export function Header() {
               height={40}
               className="h-8 w-auto"
             />
-          ) : (
-            <span className="text-xl font-bold">{config.brand.name}</span>
           )}
+          <span className="text-xl font-bold">{config.brand.name}</span>
         </Link>
 
         <Button

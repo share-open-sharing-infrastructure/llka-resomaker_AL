@@ -69,9 +69,9 @@ export function getValidPickupSlots(weeksAhead: number = 4): Date[] {
     const hours = OPENING_HOURS[dayOfWeek];
 
     if (hours) {
-      for (let hour = hours.open; hour < hours.close; hour++) {
+      for (let minutes = hours.open * 60; minutes < hours.close * 60; minutes += 30) {
         const slot = new Date(current);
-        slot.setHours(hour, 0, 0, 0);
+        slot.setHours(Math.floor(minutes / 60), minutes % 60, 0, 0);
         if (slot > now) {
           slots.push(slot);
         }
@@ -91,8 +91,8 @@ export function isValidPickupTime(date: Date): boolean {
   const hours = OPENING_HOURS[dayOfWeek];
   if (!hours) return false;
 
-  const hour = date.getHours();
-  return hour >= hours.open && hour < hours.close;
+  const totalMinutes = date.getHours() * 60 + date.getMinutes();
+  return totalMinutes >= hours.open * 60 && totalMinutes < hours.close * 60;
 }
 
 export function formatPickupDateTime(date: Date): string {

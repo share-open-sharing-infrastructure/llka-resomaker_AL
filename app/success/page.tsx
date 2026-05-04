@@ -85,7 +85,7 @@ export default function SuccessPage() {
         </div>
         <h1 className="text-2xl font-bold">Reservierung erfolgreich!</h1>
         <p className="text-muted-foreground mt-2">
-          Wir haben Ihre Reservierung erhalten.
+          Wir haben deine Reservierung erhalten.
         </p>
       </div>
 
@@ -130,6 +130,33 @@ export default function SuccessPage() {
               </ul>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className="mb-6 border-amber-200 bg-amber-50">
+        <CardContent className="p-6">
+          <h2 className="font-semibold text-amber-900 mb-2">Du bist neu bei uns?</h2>
+          <p className="text-sm text-amber-800">
+            Dann musst du einen{" "}
+            <strong>Nutzungsantrag</strong> ausfüllen und unseren <strong>Leihbedingungen</strong> zustimmen. Du hast zwei Möglichkeiten:
+          </p>
+          <ul className="mt-3 space-y-2 text-sm text-amber-800 list-disc list-inside">
+            <li>
+              <span className="font-bold">Online:</span>{" "}
+              <a
+                href="https://tally.so/r/jaGazx"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline font-medium hover:text-amber-900"
+              >
+                Nutzungsantrag jetzt online ausfüllen
+              </a>
+            </li>
+            <li>
+              <span className="font-bold">Vor Ort:</span>{" "}
+              Du kannst den Antrag auch in Papierform bei der Abholung im Commons Zentrum ausfüllen.
+            </li>
+          </ul>
         </CardContent>
       </Card>
 

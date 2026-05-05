@@ -7,7 +7,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Item, STATUS_LABELS, isAvailable } from "@/lib/types/item";
-import { getImageUrl } from "@/lib/api/client";
+import { getImageUrl, getThumbnailUrl } from "@/lib/api/client";
 import { useCart } from "@/context/cart-context";
 import { useConfig } from "@/context/config-context";
 
@@ -25,7 +25,7 @@ export function ItemCard({ item }: ItemCardProps) {
   const inCart = isInCart(item.id);
   const available = isAvailable(item.status);
   const imageUrl =
-    item.images.length > 0 ? getImageUrl(item.id, item.images[0]) : null;
+    item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "400x400") : null;
 
   const handleToggleCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -50,7 +50,8 @@ export function ItemCard({ item }: ItemCardProps) {
             fill
             className={`object-cover ${!available ? "grayscale" : ""}`}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            unoptimized
+            placeholder="blur"
+            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTVlN2ViIi8+PC9zdmc+"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-muted-foreground">

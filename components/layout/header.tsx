@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,10 +17,13 @@ export function Header() {
       <div className="container flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
           {config.brand.logo && (
-            <img
+            <Image
               src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${config.brand.logo}`}
               alt={config.brand.name}
+              width={32}
+              height={32}
               className="h-8 w-auto"
+              priority
             />
           )}
           <span className="text-xl font-bold">{config.brand.name}</span>

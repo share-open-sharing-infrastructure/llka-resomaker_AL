@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Item } from "@/lib/types/item";
-import { getImageUrl } from "@/lib/api/client";
+import { getThumbnailUrl } from "@/lib/api/client";
 
 interface CartItemProps {
   item: Item;
@@ -18,7 +18,7 @@ function stripHtml(html: string): string {
 
 export function CartItem({ item, onRemove }: CartItemProps) {
   const imageUrl =
-    item.images.length > 0 ? getImageUrl(item.id, item.images[0]) : null;
+    item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "100x100") : null;
   const name = stripHtml(item.name);
 
   return (
@@ -31,7 +31,8 @@ export function CartItem({ item, onRemove }: CartItemProps) {
             fill
             className="object-cover"
             sizes="80px"
-            unoptimized
+            placeholder="blur"
+            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTVlN2ViIi8+PC9zdmc+"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-muted-foreground">

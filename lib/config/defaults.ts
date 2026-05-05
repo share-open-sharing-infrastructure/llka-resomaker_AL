@@ -28,6 +28,7 @@ export const DEFAULT_META: MetaConfig = {
 export const DEFAULT_FEATURES: FeaturesConfig = {
   search: true,
   availabilityToggle: true,
+  categoryFilter: true,
   itemIds: true,
   detailPages: true,
   urlParams: true,

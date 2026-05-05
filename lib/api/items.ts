@@ -21,7 +21,8 @@ export async function getItems(
   page: number = 1,
   perPage: number = 30,
   search?: string,
-  availableOnly: boolean = true
+  availableOnly: boolean = true,
+  category?: string
 ): Promise<ItemsResponse> {
   const filters: string[] = [];
 
@@ -37,6 +38,11 @@ export async function getItems(
     filters.push(
       `(name~"${searchTerm}" || description~"${searchTerm}" || category~"${searchTerm}" || synonyms~"${searchTerm}")`
     );
+  }
+
+  if (category) {
+    const categoryTerm = category.replace(/"/g, '\\"');
+    filters.push(`category~"${categoryTerm}"`);
   }
 
   const params = new URLSearchParams({
@@ -68,4 +74,37 @@ export async function getItemByIid(iid: number): Promise<Item | null> {
   );
 
   return response.items.length > 0 ? normalizeItem(response.items[0]) : null;
+}
+
+export async function getCategories(): Promise<string[]> {
+  const categories = new Set<string>();
+  let page = 1;
+  let totalPages = 1;
+
+  // Fetch all items with only the category field to minimize payload
+  while (page <= totalPages) {
+    const params = new URLSearchParams({
+      filter: 'status!="deleted"',
+      fields: "category",
+      perPage: "500",
+      page: page.toString(),
+    });
+
+    const raw = await fetchApi<ItemsResponse>(
+      `/api/collections/item_public/records?${params.toString()}`
+    );
+
+    for (const item of raw.items) {
+      const normalized = normalizeItem(item as Item);
+      for (const cat of normalized.category) {
+        const trimmed = cat.trim();
+        if (trimmed) categories.add(trimmed);
+      }
+    }
+
+    totalPages = raw.totalPages;
+    page++;
+  }
+
+  return Array.from(categories).sort();
 }

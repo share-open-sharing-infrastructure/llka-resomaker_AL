@@ -22,6 +22,7 @@ export interface OpeningHoursConfig {
 export interface FeaturesConfig {
   search: boolean;
   availabilityToggle: boolean;
+  categoryFilter: boolean;
   itemIds: boolean;
   detailPages: boolean;
   urlParams: boolean;

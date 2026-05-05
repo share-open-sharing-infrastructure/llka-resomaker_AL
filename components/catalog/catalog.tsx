@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SearchBar } from "./search-bar";
+import { CategoryFilter } from "./category-filter";
 import { ItemGrid, ItemGridSkeleton } from "./item-grid";
 import { Pagination } from "./pagination";
-import { getItems } from "@/lib/api/items";
+import { getItems, getCategories } from "@/lib/api/items";
 import { Item } from "@/lib/types/item";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Eye, EyeOff } from "lucide-react";
@@ -31,9 +32,15 @@ export function Catalog({ initialItems }: CatalogProps) {
   const initialAvailable = config.features.urlParams
     ? searchParams.get("all") !== "1"
     : config.defaults.availableOnly;
+  const initialCategory = config.features.urlParams
+    ? searchParams.get("cat") || null
+    : null;
 
   const [items, setItems] = useState<Item[]>(initialItems || []);
   const [search, setSearch] = useState(initialSearch);
+  const [category, setCategory] = useState<string | null>(initialCategory);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [availableOnly, setAvailableOnly] = useState(initialAvailable);
   const [page, setPage] = useState(initialPage);
   const [totalPages, setTotalPages] = useState(1);
@@ -41,24 +48,41 @@ export function Catalog({ initialItems }: CatalogProps) {
   const [isLoading, setIsLoading] = useState(!initialItems);
   const [error, setError] = useState<string | null>(null);
 
+  const categoriesFetched = useRef(false);
+
+  // Fetch categories on mount (only once)
+  useEffect(() => {
+    if (!config.features.categoryFilter || categoriesFetched.current) return;
+    categoriesFetched.current = true;
+
+    setCategoriesLoading(true);
+    getCategories()
+      .then(setCategories)
+      .catch(() => {
+        // Silently fail — filter just won't show categories
+      })
+      .finally(() => setCategoriesLoading(false));
+  }, [config.features.categoryFilter]);
+
   // Update URL params (only if feature is enabled)
   const updateUrl = useCallback(
-    (newSearch: string, newPage: number, newAvailableOnly: boolean) => {
+    (newSearch: string, newPage: number, newAvailableOnly: boolean, newCategory: string | null) => {
       if (!config.features.urlParams) return;
 
       const params = new URLSearchParams();
       if (newSearch) params.set("q", newSearch);
       if (newPage > 1) params.set("page", newPage.toString());
       if (!newAvailableOnly) params.set("all", "1");
+      if (newCategory) params.set("cat", newCategory);
 
       const queryString = params.toString();
       router.replace(queryString ? `?${queryString}` : "/", { scroll: false });
     },
-    [router]
+    [router, config.features.urlParams]
   );
 
   const fetchItems = useCallback(
-    async (searchTerm: string, showAvailableOnly: boolean, pageNum: number) => {
+    async (searchTerm: string, showAvailableOnly: boolean, pageNum: number, selectedCategory: string | null) => {
       setIsLoading(true);
       setError(null);
 
@@ -67,7 +91,8 @@ export function Catalog({ initialItems }: CatalogProps) {
           pageNum,
           config.limits.itemsPerPage,
           searchTerm || undefined,
-          showAvailableOnly
+          showAvailableOnly,
+          selectedCategory || undefined
         );
         setItems(response.items);
         setTotalPages(response.totalPages);
@@ -82,32 +107,32 @@ export function Catalog({ initialItems }: CatalogProps) {
         setIsLoading(false);
       }
     },
-    []
+    [config.limits.itemsPerPage]
   );
 
   // Debounced search - reset to page 1
   useEffect(() => {
     const timer = setTimeout(() => {
       setPage(1);
-      fetchItems(search, availableOnly, 1);
-      updateUrl(search, 1, availableOnly);
+      fetchItems(search, availableOnly, 1, category);
+      updateUrl(search, 1, availableOnly, category);
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [search, availableOnly, fetchItems, updateUrl]);
+  }, [search, availableOnly, category, fetchItems, updateUrl]);
 
   // Page change
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
-    fetchItems(search, availableOnly, newPage);
-    updateUrl(search, newPage, availableOnly);
+    fetchItems(search, availableOnly, newPage, category);
+    updateUrl(search, newPage, availableOnly, category);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Initial load from URL params
   useEffect(() => {
     if (!initialItems) {
-      fetchItems(initialSearch, initialAvailable, initialPage);
+      fetchItems(initialSearch, initialAvailable, initialPage, initialCategory);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -116,7 +141,7 @@ export function Catalog({ initialItems }: CatalogProps) {
     setAvailableOnly((prev) => !prev);
   };
 
-  const showControls = config.features.search || config.features.availabilityToggle;
+  const showControls = config.features.search || config.features.availabilityToggle || config.features.categoryFilter;
 
   return (
     <div className="space-y-6">
@@ -134,15 +159,23 @@ export function Catalog({ initialItems }: CatalogProps) {
           </p>
         </div>
         {showControls && (
-          <div className="flex gap-2 w-full sm:w-auto">
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
             {config.features.search && (
-              <div className="flex-1 sm:w-72">
+              <div className="flex-1 sm:w-72 min-w-0">
                 <SearchBar
                   value={search}
                   onChange={setSearch}
                   placeholder="Gegenstand suchen..."
                 />
               </div>
+            )}
+            {config.features.categoryFilter && (
+              <CategoryFilter
+                categories={categories}
+                value={category}
+                onChange={setCategory}
+                isLoading={categoriesLoading}
+              />
             )}
             {config.features.availabilityToggle && (
               <Button
@@ -176,7 +209,7 @@ export function Catalog({ initialItems }: CatalogProps) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => fetchItems(search, availableOnly, page)}
+              onClick={() => fetchItems(search, availableOnly, page, category)}
             >
               Erneut versuchen
             </Button>

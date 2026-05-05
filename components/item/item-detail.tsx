@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Item, STATUS_LABELS, isAvailable } from "@/lib/types/item";
-import { getImageUrl, getThumbnailUrl } from "@/lib/api/client";
+import { getImageUrl } from "@/lib/api/client";
 import { useCart } from "@/context/cart-context";
 import { useConfig } from "@/context/config-context";
 
@@ -65,9 +65,8 @@ export function ItemDetail({ item }: ItemDetailProps) {
                 fill
                 className={`object-contain ${!available ? "grayscale opacity-70" : ""}`}
                 sizes="(max-width: 1024px) 100vw, 50vw"
+                unoptimized
                 priority
-                placeholder="blur"
-                blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTVlN2ViIi8+PC9zdmc+"
               />
               {item.images.length > 1 && (
                 <>
@@ -124,13 +123,12 @@ export function ItemDetail({ item }: ItemDetailProps) {
                 }`}
               >
                 <Image
-                  src={getThumbnailUrl(item.id, img, "100x100")}
+                  src={getImageUrl(item.id, img)}
                   alt={`${name} - Bild ${index + 1}`}
                   fill
                   className="object-cover"
                   sizes="64px"
-                  placeholder="blur"
-                  blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTVlN2ViIi8+PC9zdmc+"
+                  unoptimized
                 />
               </button>
             ))}

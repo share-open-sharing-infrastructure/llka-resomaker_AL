@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Item } from "@/lib/types/item";
-import { getThumbnailUrl } from "@/lib/api/client";
+import { getImageUrl } from "@/lib/api/client";
 import { useConfig } from "@/context/config-context";
 
 interface CartSummaryProps {
@@ -28,7 +28,7 @@ export function CartSummary({ items }: CartSummaryProps) {
       <div className="space-y-3">
         {items.map((item) => {
           const imageUrl =
-            item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "100x100") : null;
+            item.images.length > 0 ? getImageUrl(item.id, item.images[0]) : null;
           const name = stripHtml(item.name);
 
           return (
@@ -41,8 +41,7 @@ export function CartSummary({ items }: CartSummaryProps) {
                     fill
                     className="object-cover"
                     sizes="48px"
-                    placeholder="blur"
-                    blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTVlN2ViIi8+PC9zdmc+"
+                    unoptimized
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center text-muted-foreground text-xs">

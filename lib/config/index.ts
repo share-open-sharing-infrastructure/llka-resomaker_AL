@@ -76,6 +76,10 @@ export const config: AppConfig = {
       "FEATURE_AVAILABILITY_TOGGLE",
       DEFAULT_FEATURES.availabilityToggle
     ),
+    categoryFilter: envBool(
+      "FEATURE_CATEGORY_FILTER",
+      DEFAULT_FEATURES.categoryFilter
+    ),
     itemIds: envBool("FEATURE_ITEM_IDS", DEFAULT_FEATURES.itemIds),
     detailPages: envBool("FEATURE_DETAIL_PAGES", DEFAULT_FEATURES.detailPages),
     urlParams: envBool("FEATURE_URL_PARAMS", DEFAULT_FEATURES.urlParams),

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Item } from "@/lib/types/item";
-import { getImageUrl } from "@/lib/api/client";
+import { getThumbnailUrl } from "@/lib/api/client";
 import { useConfig } from "@/context/config-context";
 
 interface CartSummaryProps {
@@ -28,7 +28,7 @@ export function CartSummary({ items }: CartSummaryProps) {
       <div className="space-y-3">
         {items.map((item) => {
           const imageUrl =
-            item.images.length > 0 ? getImageUrl(item.id, item.images[0]) : null;
+            item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "96x96") : null;
           const name = stripHtml(item.name);
 
           return (

@@ -41,7 +41,7 @@ export const DEFAULT_FEATURES: FeaturesConfig = {
 export const DEFAULT_LIMITS: LimitsConfig = {
   cartItems: 10,
   pickupDays: 28,
-  itemsPerPage: 24,
+  itemsPerPage: 12,
 };
 
 export const DEFAULT_DEFAULTS: DefaultsConfig = {

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Item, STATUS_LABELS, isAvailable } from "@/lib/types/item";
-import { getImageUrl } from "@/lib/api/client";
+import { getThumbnailUrl } from "@/lib/api/client";
 import { useCart } from "@/context/cart-context";
 import { useConfig } from "@/context/config-context";
 
@@ -31,7 +31,7 @@ export function ItemDetail({ item }: ItemDetailProps) {
   const description = item.description ? stripHtml(item.description) : null;
   const hasImages = item.images.length > 0;
   const currentImage = hasImages
-    ? getImageUrl(item.id, item.images[currentImageIndex])
+    ? getThumbnailUrl(item.id, item.images[currentImageIndex], "1024x1024")
     : null;
 
   const handleToggleCart = () => {
@@ -123,7 +123,7 @@ export function ItemDetail({ item }: ItemDetailProps) {
                 }`}
               >
                 <Image
-                  src={getImageUrl(item.id, img)}
+                  src={getThumbnailUrl(item.id, img, "128x128")}
                   alt={`${name} - Bild ${index + 1}`}
                   fill
                   className="object-cover"

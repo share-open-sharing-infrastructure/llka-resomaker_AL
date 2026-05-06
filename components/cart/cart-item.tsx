@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Item } from "@/lib/types/item";
-import { getImageUrl } from "@/lib/api/client";
+import { getThumbnailUrl } from "@/lib/api/client";
 
 interface CartItemProps {
   item: Item;
@@ -18,7 +18,7 @@ function stripHtml(html: string): string {
 
 export function CartItem({ item, onRemove }: CartItemProps) {
   const imageUrl =
-    item.images.length > 0 ? getImageUrl(item.id, item.images[0]) : null;
+    item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "160x160") : null;
   const name = stripHtml(item.name);
 
   return (

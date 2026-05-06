@@ -65,7 +65,6 @@ export function ItemDetail({ item }: ItemDetailProps) {
                 fill
                 className={`object-contain ${!available ? "grayscale opacity-70" : ""}`}
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                unoptimized
                 priority
               />
               {item.images.length > 1 && (
@@ -127,8 +126,7 @@ export function ItemDetail({ item }: ItemDetailProps) {
                   alt={`${name} - Bild ${index + 1}`}
                   fill
                   className="object-cover"
-                  sizes="64px"
-                  unoptimized
+                    sizes="64px"
                 />
               </button>
             ))}

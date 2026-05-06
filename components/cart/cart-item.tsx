@@ -31,7 +31,6 @@ export function CartItem({ item, onRemove }: CartItemProps) {
             fill
             className="object-cover"
             sizes="80px"
-            unoptimized
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-muted-foreground">

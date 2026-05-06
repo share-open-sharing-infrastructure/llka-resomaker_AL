@@ -50,7 +50,6 @@ export function ItemCard({ item }: ItemCardProps) {
             fill
             className={`object-cover ${!available ? "grayscale" : ""}`}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            unoptimized
           />
         ) : (
           <div className="flex h-full items-center justify-center text-muted-foreground">

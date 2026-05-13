@@ -44,7 +44,7 @@ export function ReservationForm() {
 
   const onSubmit = async (data: ReservationFormData) => {
     if (items.length === 0) {
-      setError("Ihr Ausleihkorb ist leer.");
+      setError("Dein Ausleihkorb ist leer.");
       return;
     }
 
@@ -113,7 +113,7 @@ export function ReservationForm() {
         <Input
           id="email"
           type="email"
-          placeholder="ihre@email.de"
+          placeholder="deine@email.de"
           {...register("customer_email")}
           className={errors.customer_email ? "border-destructive" : ""}
         />

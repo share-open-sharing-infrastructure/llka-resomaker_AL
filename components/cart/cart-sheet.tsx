@@ -41,7 +41,7 @@ export function CartSheet() {
               <ShoppingCart className="h-12 w-12 text-muted-foreground" />
             </div>
             <div className="space-y-2">
-              <p className="text-lg font-medium">Ihr Ausleihkorb ist leer</p>
+              <p className="text-lg font-medium">Dein Ausleihkorb ist leer</p>
               <p className="text-sm text-muted-foreground max-w-[250px]">
                 Füge Gegenstände hinzu, um sie zu reservieren.
               </p>

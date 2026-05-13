@@ -21,7 +21,7 @@ export function CartSummary({ items }: CartSummaryProps) {
   return (
     <div className="rounded-lg border bg-card p-4 space-y-4">
       <h3 className="font-semibold">
-        Ihre Ausleihe ({items.length}{" "}
+        Deine Ausleihe ({items.length}{" "}
         {items.length === 1 ? "Gegenstand" : "Gegenstände"})
       </h3>
 

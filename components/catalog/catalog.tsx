@@ -155,7 +155,7 @@ export function Catalog({ initialItems }: CatalogProps) {
           <p className="text-muted-foreground">
             {totalItems > 0
               ? `${totalItems} Gegenstände gefunden`
-              : "Wählen Sie Gegenstände aus und reservieren Sie sie zur Abholung."}
+              : "Wähle Gegenstände aus und reserviere sie zur Abholung."}
           </p>
         </div>
         {showControls && (

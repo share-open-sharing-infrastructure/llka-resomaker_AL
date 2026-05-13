@@ -43,7 +43,7 @@ export function CartSheet() {
             <div className="space-y-2">
               <p className="text-lg font-medium">Ihr Ausleihkorb ist leer</p>
               <p className="text-sm text-muted-foreground max-w-[250px]">
-                Fügen Sie Gegenstände hinzu, um sie zu reservieren.
+                Füge Gegenstände hinzu, um sie zu reservieren.
               </p>
             </div>
             <Button onClick={() => setIsOpen(false)}>

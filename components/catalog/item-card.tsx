@@ -7,7 +7,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Item, STATUS_LABELS, isAvailable } from "@/lib/types/item";
-import { getImageUrl } from "@/lib/api/client";
+import { getThumbnailUrl } from "@/lib/api/client";
 import { useCart } from "@/context/cart-context";
 import { useConfig } from "@/context/config-context";
 
@@ -25,7 +25,7 @@ export function ItemCard({ item }: ItemCardProps) {
   const inCart = isInCart(item.id);
   const available = isAvailable(item.status);
   const imageUrl =
-    item.images.length > 0 ? getImageUrl(item.id, item.images[0]) : null;
+    item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "400x400") : null;
 
   const handleToggleCart = (e: React.MouseEvent) => {
     e.preventDefault();

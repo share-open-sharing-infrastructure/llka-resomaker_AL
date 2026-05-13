@@ -68,7 +68,7 @@ export const config: AppConfig = {
       env("META_TITLE", "") || `${brandName} - ${taglineText}`,
     description:
       env("META_DESCRIPTION", "") ||
-      `Reservieren Sie Gegenstande bei ${brandName} - nachhaltig und gemeinschaftlich.`,
+      `Reserviere Gegenstände bei ${brandName} - nachhaltig und gemeinschaftlich.`,
   },
   features: {
     search: envBool("FEATURE_SEARCH", DEFAULT_FEATURES.search),

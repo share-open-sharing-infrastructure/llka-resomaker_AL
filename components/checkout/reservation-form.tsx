@@ -90,7 +90,7 @@ export function ReservationForm() {
           setError(err.message);
         }
       } else {
-        setError("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+        setError("Ein Fehler ist aufgetreten. Bitte versuche es erneut.");
       }
     } finally {
       setIsSubmitting(false);
@@ -123,7 +123,7 @@ export function ReservationForm() {
           </p>
         )}
         <p className="text-xs text-muted-foreground">
-          Sie erhalten eine Bestätigung mit allen Details an diese Adresse.
+          Du erhältst eine Bestätigung mit allen Details an diese Adresse.
         </p>
       </div>
 

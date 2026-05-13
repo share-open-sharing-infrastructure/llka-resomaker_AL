@@ -15,7 +15,7 @@ export default function CheckoutPage() {
       <div className="max-w-md mx-auto text-center py-12 space-y-6">
         <h1 className="text-2xl font-bold">Ihr Ausleihkorb ist leer</h1>
         <p className="text-muted-foreground">
-          Fügen Sie Gegenstände hinzu, um sie zu reservieren.
+          Füge Gegenstände hinzu, um sie zu reservieren.
         </p>
         <Button asChild>
           <Link href="/">Zur Übersicht</Link>
@@ -38,7 +38,7 @@ export default function CheckoutPage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold">Reservierung abschließen</h1>
         <p className="text-muted-foreground mt-1">
-          Geben Sie Ihre Daten ein und wählen Sie einen Abholtermin.
+          Gebe deine Daten ein und wähle einen Abholtermin.
         </p>
       </div>
 

@@ -65,8 +65,9 @@ export function ItemDetail({ item }: ItemDetailProps) {
                 fill
                 className={`object-contain ${!available ? "grayscale opacity-70" : ""}`}
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                unoptimized
                 priority
+                placeholder="blur"
+                blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSIxMDI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4="
               />
               {item.images.length > 1 && (
                 <>
@@ -128,7 +129,6 @@ export function ItemDetail({ item }: ItemDetailProps) {
                   fill
                   className="object-cover"
                   sizes="64px"
-                  unoptimized
                 />
               </button>
             ))}

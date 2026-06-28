@@ -18,7 +18,7 @@ function stripHtml(html: string): string {
 
 export function CartItem({ item, onRemove }: CartItemProps) {
   const imageUrl =
-    item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "160x160") : null;
+    item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "80x80f") : null;
   const name = stripHtml(item.name);
 
   return (
@@ -29,6 +29,7 @@ export function CartItem({ item, onRemove }: CartItemProps) {
             src={imageUrl}
             alt={name}
             fill
+            unoptimized
             className="object-cover"
             sizes="80px"
           />

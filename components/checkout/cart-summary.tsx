@@ -28,7 +28,7 @@ export function CartSummary({ items }: CartSummaryProps) {
       <div className="space-y-3">
         {items.map((item) => {
           const imageUrl =
-            item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "96x96") : null;
+            item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "40x40f") : null;
           const name = stripHtml(item.name);
 
           return (
@@ -39,6 +39,7 @@ export function CartSummary({ items }: CartSummaryProps) {
                     src={imageUrl}
                     alt={name}
                     fill
+                    unoptimized
                     className="object-cover"
                     sizes="48px"
                   />

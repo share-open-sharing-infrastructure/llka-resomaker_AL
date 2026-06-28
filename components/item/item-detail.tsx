@@ -31,7 +31,7 @@ export function ItemDetail({ item }: ItemDetailProps) {
   const description = item.description ? stripHtml(item.description) : null;
   const hasImages = item.images.length > 0;
   const currentImage = hasImages
-    ? getThumbnailUrl(item.id, item.images[currentImageIndex], "1024x1024")
+    ? getThumbnailUrl(item.id, item.images[currentImageIndex], "512x512f")
     : null;
 
   const handleToggleCart = () => {
@@ -63,11 +63,10 @@ export function ItemDetail({ item }: ItemDetailProps) {
                 src={currentImage}
                 alt={name}
                 fill
+                unoptimized
                 className={`object-contain ${!available ? "grayscale opacity-70" : ""}`}
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 priority
-                placeholder="blur"
-                blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSIxMDI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4="
               />
               {item.images.length > 1 && (
                 <>
@@ -124,9 +123,10 @@ export function ItemDetail({ item }: ItemDetailProps) {
                 }`}
               >
                 <Image
-                  src={getThumbnailUrl(item.id, img, "128x128")}
+                  src={getThumbnailUrl(item.id, img, "80x80f")}
                   alt={`${name} - Bild ${index + 1}`}
                   fill
+                  unoptimized
                   className="object-cover"
                   sizes="64px"
                 />

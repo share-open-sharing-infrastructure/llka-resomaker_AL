@@ -25,7 +25,7 @@ export function ItemCard({ item }: ItemCardProps) {
   const inCart = isInCart(item.id);
   const available = isAvailable(item.status);
   const imageUrl =
-    item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "400x400") : null;
+    item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "200x200f") : null;
 
   const handleToggleCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -48,10 +48,9 @@ export function ItemCard({ item }: ItemCardProps) {
             src={imageUrl}
             alt={name}
             fill
+            unoptimized
             className={`object-cover ${!available ? "grayscale" : ""}`}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            placeholder="blur"
-            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTJlOGYwIi8+PC9zdmc+"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-muted-foreground">

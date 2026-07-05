@@ -25,7 +25,7 @@ export function ItemCard({ item }: ItemCardProps) {
   const inCart = isInCart(item.id);
   const available = isAvailable(item.status);
   const imageUrl =
-    item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "200x200f") : null;
+    item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "512x512f") : null;
 
   const handleToggleCart = (e: React.MouseEvent) => {
     e.preventDefault();

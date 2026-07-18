@@ -1,10 +1,13 @@
 "use client";
 
 import Image from "next/image";
+import { Minus, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Item } from "@/lib/types/item";
 import { getThumbnailUrl } from "@/lib/api/client";
 import { useConfig } from "@/context/config-context";
+import { useCart } from "@/context/cart-context";
 
 interface CartSummaryProps {
   items: Item[];
@@ -16,7 +19,8 @@ function stripHtml(html: string): string {
 
 export function CartSummary({ items }: CartSummaryProps) {
   const config = useConfig();
-  const totalDeposit = items.reduce((sum, item) => sum + item.deposit, 0);
+  const { getQuantity, setQuantity } = useCart();
+  const totalDeposit = items.reduce((sum, item) => sum + item.deposit * (getQuantity(item.id)), 0);
 
   return (
     <div className="rounded-lg border bg-card p-4 space-y-4">
@@ -30,6 +34,9 @@ export function CartSummary({ items }: CartSummaryProps) {
           const imageUrl =
             item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "40x40f") : null;
           const name = stripHtml(item.name);
+          const qty = getQuantity(item.id);
+          const maxCopies = item.available_copies ?? item.copies;
+          const showStepper = item.copies > 1;
 
           return (
             <div key={item.id} className="flex items-center gap-3">
@@ -52,10 +59,38 @@ export function CartSummary({ items }: CartSummaryProps) {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{name}</p>
                 <p className="text-xs text-muted-foreground">#{item.iid}</p>
+                {showStepper && (
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-5 w-5"
+                      onClick={() => setQuantity(item.id, Math.max(1, qty - 1))}
+                      disabled={qty <= 1}
+                      aria-label="Weniger"
+                    >
+                      <Minus className="h-2.5 w-2.5" />
+                    </Button>
+                    <span className="w-5 text-center text-xs font-medium">{qty}</span>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-5 w-5"
+                      onClick={() => setQuantity(item.id, Math.min(maxCopies, qty + 1))}
+                      disabled={qty >= maxCopies}
+                      aria-label="Mehr"
+                    >
+                      <Plus className="h-2.5 w-2.5" />
+                    </Button>
+                    <span className="text-xs text-muted-foreground">Exemplare</span>
+                  </div>
+                )}
               </div>
               {config.features.deposit && item.deposit > 0 && (
                 <Badge variant="secondary" className="shrink-0">
-                  Kaution: {item.deposit}{config.display.currency} 
+                  Kaution: {item.deposit * qty}{config.display.currency}
                 </Badge>
               )}
             </div>

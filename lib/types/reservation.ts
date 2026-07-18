@@ -5,6 +5,7 @@ export interface ReservationRequest {
   items: string[];
   pickup: string; // "YYYY-MM-DD HH:mm:ss"
   comments?: string;
+  requested_copies?: Record<string, number>;
 }
 
 export interface ReservationResponse {

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { Check, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Check, Plus, ChevronLeft, ChevronRight, Minus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -22,9 +22,12 @@ function stripHtml(html: string): string {
 
 export function ItemDetail({ item }: ItemDetailProps) {
   const config = useConfig();
-  const { addItem, removeItem, isInCart } = useCart();
+  const { addItem, removeItem, isInCart, getQuantity, setQuantity } = useCart();
   const inCart = isInCart(item.id);
   const available = isAvailable(item.status);
+  const availableCopies = item.available_copies ?? item.copies;
+  const showQuantitySelector = config.features.copies && item.copies > 1;
+  const [pendingQuantity, setPendingQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const name = stripHtml(item.name);
@@ -38,7 +41,18 @@ export function ItemDetail({ item }: ItemDetailProps) {
     if (inCart) {
       removeItem(item.id);
     } else {
-      addItem(item);
+      addItem(item, pendingQuantity);
+    }
+  };
+
+  const cartQuantity = getQuantity(item.id);
+
+  const handleQuantityChange = (delta: number) => {
+    if (inCart) {
+      const next = Math.min(Math.max(1, cartQuantity + delta), availableCopies);
+      setQuantity(item.id, next);
+    } else {
+      setPendingQuantity((prev) => Math.min(Math.max(1, prev + delta), availableCopies));
     }
   };
 
@@ -167,7 +181,12 @@ export function ItemDetail({ item }: ItemDetailProps) {
           {config.features.copies && item.copies > 0 && (
             <div>
               <p className="text-sm text-muted-foreground">Verfügbare Exemplare</p>
-              <p className="font-medium">{item.copies}</p>
+              <p className="font-medium">
+                {availableCopies}
+                {availableCopies !== item.copies && (
+                  <span className="text-muted-foreground font-normal"> von {item.copies}</span>
+                )}
+              </p>
             </div>
           )}
           {item.parts > 0 && (
@@ -179,6 +198,38 @@ export function ItemDetail({ item }: ItemDetailProps) {
         </div>
 
         <Separator />
+
+        {available && showQuantitySelector && (
+          <div className="flex items-center gap-3">
+            <p className="text-sm text-muted-foreground">Anzahl Exemplare:</p>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => handleQuantityChange(-1)}
+                disabled={inCart ? cartQuantity <= 1 : pendingQuantity <= 1}
+              >
+                <Minus className="h-3 w-3" />
+              </Button>
+              <span className="w-8 text-center font-medium">
+                {inCart ? cartQuantity : pendingQuantity}
+              </span>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => handleQuantityChange(1)}
+                disabled={inCart ? cartQuantity >= availableCopies : pendingQuantity >= availableCopies}
+              >
+                <Plus className="h-3 w-3" />
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">von {availableCopies}</p>
+          </div>
+        )}
 
         <div className="flex items-center justify-between gap-4">
           {config.features.deposit && item.deposit > 0 && (
@@ -199,6 +250,7 @@ export function ItemDetail({ item }: ItemDetailProps) {
                 <>
                   <Check className="mr-2 h-5 w-5" />
                   Im Ausleihkorb
+                  {showQuantitySelector && cartQuantity > 1 && ` (×${cartQuantity})`}
                 </>
               ) : (
                 <>

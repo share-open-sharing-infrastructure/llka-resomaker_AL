@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { X } from "lucide-react";
+import { X, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Item } from "@/lib/types/item";
@@ -10,16 +10,20 @@ import { getThumbnailUrl } from "@/lib/api/client";
 interface CartItemProps {
   item: Item;
   onRemove: (itemId: string) => void;
+  quantity?: number;
+  maxQuantity?: number;
+  onQuantityChange?: (qty: number) => void;
 }
 
 function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, "").trim();
 }
 
-export function CartItem({ item, onRemove }: CartItemProps) {
+export function CartItem({ item, onRemove, quantity = 1, maxQuantity = 1, onQuantityChange }: CartItemProps) {
   const imageUrl =
     item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "80x80f") : null;
   const name = stripHtml(item.name);
+  const showStepper = (maxQuantity > 1 || quantity > 1) && !!onQuantityChange;
 
   return (
     <div className="flex items-start gap-4 py-4">
@@ -50,6 +54,32 @@ export function CartItem({ item, onRemove }: CartItemProps) {
         )}
         {item.deposit > 0 && (
           <p className="text-sm font-medium mt-1">{item.deposit}&euro;</p>
+        )}
+        {showStepper && (
+          <div className="flex items-center gap-2 mt-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-6 w-6"
+              onClick={() => onQuantityChange(Math.max(1, quantity - 1))}
+              disabled={quantity <= 1}
+              aria-label="Weniger"
+            >
+              <Minus className="h-3 w-3" />
+            </Button>
+            <span className="w-6 text-center text-sm font-medium">{quantity}</span>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-6 w-6"
+              onClick={() => onQuantityChange(Math.min(maxQuantity, quantity + 1))}
+              disabled={quantity >= maxQuantity}
+              aria-label="Mehr"
+            >
+              <Plus className="h-3 w-3" />
+            </Button>
+            <span className="text-xs text-muted-foreground">von {maxQuantity}</span>
+          </div>
         )}
       </div>
 

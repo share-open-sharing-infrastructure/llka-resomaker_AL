@@ -24,6 +24,7 @@ export function ItemCard({ item }: ItemCardProps) {
   const { addItem, removeItem, isInCart } = useCart();
   const inCart = isInCart(item.id);
   const available = isAvailable(item.status);
+  const availableCopies = item.available_copies ?? item.copies;
   const imageUrl =
     item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "200x200f") : null;
 
@@ -62,9 +63,9 @@ export function ItemCard({ item }: ItemCardProps) {
             #{item.iid}
           </Badge>
         )}
-        {config.features.copies && available && item.copies > 1 && (
+        {config.features.copies && available && item.copies > 1 && availableCopies > 0 && (
           <Badge className="absolute top-2 right-2" variant="secondary">
-            {item.copies}x verfügbar
+            {availableCopies}x verfügbar
           </Badge>
         )}
         {!available && (

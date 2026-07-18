@@ -40,6 +40,7 @@ export interface Item {
   manual: boolean;
   parts: number;
   copies: number;
+  available_copies?: number;
   images: string[];
   added_on: string;
   created: string;

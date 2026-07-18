@@ -21,7 +21,7 @@ export async function getItems(
   page: number = 1,
   perPage: number = 30,
   search?: string,
-  availableOnly: boolean = true,
+  availableOnly: boolean = false,
   category?: string
 ): Promise<ItemsResponse> {
   const filters: string[] = [];

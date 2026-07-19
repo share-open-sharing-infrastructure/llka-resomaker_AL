@@ -30,7 +30,7 @@ export function Catalog({ initialItems }: CatalogProps) {
     ? parseInt(searchParams.get("page") || "1", 10)
     : 1;
   const initialAvailable = config.features.urlParams
-    ? searchParams.get("all") !== "1"
+    ? searchParams.get("available") === "1"
     : config.defaults.availableOnly;
   const initialCategory = config.features.urlParams
     ? searchParams.get("cat") || null
@@ -72,7 +72,7 @@ export function Catalog({ initialItems }: CatalogProps) {
       const params = new URLSearchParams();
       if (newSearch) params.set("q", newSearch);
       if (newPage > 1) params.set("page", newPage.toString());
-      if (!newAvailableOnly) params.set("all", "1");
+      if (newAvailableOnly) params.set("available", "1");
       if (newCategory) params.set("cat", newCategory);
 
       const queryString = params.toString();
@@ -179,7 +179,7 @@ export function Catalog({ initialItems }: CatalogProps) {
             )}
             {config.features.availabilityToggle && (
               <Button
-                variant={availableOnly ? "outline" : "secondary"}
+                variant={availableOnly ? "secondary" : "outline"}
                 size="icon"
                 onClick={toggleAvailableOnly}
                 title={availableOnly ? "Alle anzeigen" : "Nur verfügbare anzeigen"}
@@ -195,9 +195,9 @@ export function Catalog({ initialItems }: CatalogProps) {
         )}
       </div>
 
-      {config.features.availabilityToggle && !availableOnly && (
+      {config.features.availabilityToggle && availableOnly && (
         <p className="text-sm text-muted-foreground">
-          Es werden auch nicht verfügbare Gegenstände angezeigt.
+          Nicht verfügbare Gegenstände werden ausgeblendet.
         </p>
       )}
 

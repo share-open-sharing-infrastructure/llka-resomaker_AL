@@ -45,7 +45,7 @@ export const DEFAULT_LIMITS: LimitsConfig = {
 };
 
 export const DEFAULT_DEFAULTS: DefaultsConfig = {
-  availableOnly: true,
+  availableOnly: false,
   sort: "name",
 };
 

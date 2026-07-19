@@ -84,7 +84,7 @@ Format: `"HH:MM-HH:MM"` or omit/null for closed days.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `NEXT_PUBLIC_DEFAULT_AVAILABLE_ONLY` | `true` | Default state of availability filter |
+| `NEXT_PUBLIC_DEFAULT_AVAILABLE_ONLY` | `false` | Default state of availability filter |
 | `NEXT_PUBLIC_DEFAULT_SORT` | `name` | Default sort field for items |
 
 ### Display

@@ -9,8 +9,12 @@ import {
   ReactNode,
 } from "react";
 import { toast } from "sonner";
-import { Item } from "@/lib/types/item";
+import { Item, getAvailableCopies } from "@/lib/types/item";
 import { useConfig } from "@/context/config-context";
+
+function clampQuantity(quantity: number, item: Item): number {
+  return Math.min(Math.max(1, quantity), getAvailableCopies(item));
+}
 
 interface CartContextType {
   items: Item[];
@@ -46,8 +50,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
           // legacy format: plain array of items
           setItems(parsed);
         } else if (parsed && Array.isArray(parsed.items)) {
-          setItems(parsed.items);
-          setQuantities(parsed.quantities || {});
+          const items: Item[] = parsed.items;
+          const storedQuantities: Record<string, number> = parsed.quantities || {};
+          const clamped: Record<string, number> = {};
+          for (const item of items) {
+            if (item.id in storedQuantities) {
+              clamped[item.id] = clampQuantity(storedQuantities[item.id], item);
+            }
+          }
+          setItems(items);
+          setQuantities(clamped);
         }
       } catch {
         // Invalid JSON, ignore
@@ -64,6 +76,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items, quantities, isHydrated]);
 
   const addItem = useCallback((item: Item, quantity = 1) => {
+    let added = false;
     setItems((prev) => {
       if (prev.some((i) => i.id === item.id)) {
         return prev;
@@ -73,9 +86,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
         toast.error(`Maximal ${config.limits.cartItems} Gegenstände im Ausleihkorb erlaubt`);
         return prev;
       }
+      added = true;
       return [...prev, item];
     });
-    setQuantities((prev) => ({ ...prev, [item.id]: quantity }));
+    if (added) {
+      setQuantities((prev) => ({ ...prev, [item.id]: clampQuantity(quantity, item) }));
+    }
   }, [config.limits.cartItems]);
 
   const removeItem = useCallback((itemId: string) => {
@@ -88,8 +104,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setQuantity = useCallback((itemId: string, quantity: number) => {
-    setQuantities((prev) => ({ ...prev, [itemId]: quantity }));
-  }, []);
+    setQuantities((prev) => {
+      const item = items.find((i) => i.id === itemId);
+      return { ...prev, [itemId]: item ? clampQuantity(quantity, item) : quantity };
+    });
+  }, [items]);
 
   const getQuantity = useCallback(
     (itemId: string) => quantities[itemId] ?? 1,

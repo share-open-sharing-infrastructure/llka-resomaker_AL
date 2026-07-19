@@ -21,7 +21,7 @@ import { ApiClientError } from "@/lib/api/client";
 
 export function ReservationForm() {
   const router = useRouter();
-  const { items, quantities, clearCart } = useCart();
+  const { items, getQuantity, clearCart } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,7 +60,7 @@ export function ReservationForm() {
         pickup: data.pickup,
         comments: data.comments,
         requested_copies: Object.fromEntries(
-          items.map((item) => [item.id, quantities[item.id] ?? 1])
+          items.map((item) => [item.id, getQuantity(item.id)])
         ),
       });
 

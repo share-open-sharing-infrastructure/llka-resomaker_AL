@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Item, STATUS_LABELS, isAvailable } from "@/lib/types/item";
+import { Item, STATUS_LABELS, isAvailable, getAvailableCopies } from "@/lib/types/item";
 import { getThumbnailUrl } from "@/lib/api/client";
 import { useCart } from "@/context/cart-context";
 import { useConfig } from "@/context/config-context";
@@ -24,9 +24,10 @@ export function ItemDetail({ item }: ItemDetailProps) {
   const config = useConfig();
   const { addItem, removeItem, isInCart, getQuantity, setQuantity } = useCart();
   const inCart = isInCart(item.id);
-  const available = isAvailable(item.status);
-  const availableCopies = item.available_copies ?? item.copies;
-  const showQuantitySelector = config.features.copies && item.copies > 1;
+  const statusAvailable = isAvailable(item.status);
+  const availableCopies = getAvailableCopies(item);
+  const available = statusAvailable && availableCopies > 0;
+  const showQuantitySelector = config.features.copies && availableCopies > 1;
   const [pendingQuantity, setPendingQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -40,6 +41,7 @@ export function ItemDetail({ item }: ItemDetailProps) {
   const handleToggleCart = () => {
     if (inCart) {
       removeItem(item.id);
+      setPendingQuantity(1);
     } else {
       addItem(item, pendingQuantity);
     }
@@ -113,12 +115,20 @@ export function ItemDetail({ item }: ItemDetailProps) {
               #{item.iid}
             </Badge>
           )}
-          {!available && (
+          {!statusAvailable && (
             <Badge
               variant="destructive"
               className="absolute top-4 right-4 text-sm px-3 py-1"
             >
               {STATUS_LABELS[item.status]}
+            </Badge>
+          )}
+          {statusAvailable && !available && (
+            <Badge
+              variant="destructive"
+              className="absolute top-4 right-4 text-sm px-3 py-1"
+            >
+              Alle Exemplare ausgeliehen
             </Badge>
           )}
         </Card>
@@ -239,7 +249,7 @@ export function ItemDetail({ item }: ItemDetailProps) {
             </div>
           )}
 
-          {available ? (
+          {available || inCart ? (
             <Button
               size="lg"
               variant={inCart ? "secondary" : "default"}
@@ -262,7 +272,7 @@ export function ItemDetail({ item }: ItemDetailProps) {
           ) : (
             <div className="text-right">
               <Badge variant="destructive" className="text-base px-4 py-2">
-                {STATUS_LABELS[item.status]}
+                {statusAvailable ? "Alle Exemplare ausgeliehen" : STATUS_LABELS[item.status]}
               </Badge>
               <p className="text-sm text-muted-foreground mt-2">
                 Dieser Gegenstand ist derzeit nicht verfügbar.

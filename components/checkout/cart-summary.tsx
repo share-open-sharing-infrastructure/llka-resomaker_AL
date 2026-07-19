@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Minus, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Item } from "@/lib/types/item";
+import { Item, getAvailableCopies } from "@/lib/types/item";
 import { getThumbnailUrl } from "@/lib/api/client";
 import { useConfig } from "@/context/config-context";
 import { useCart } from "@/context/cart-context";
@@ -35,8 +35,8 @@ export function CartSummary({ items }: CartSummaryProps) {
             item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "40x40f") : null;
           const name = stripHtml(item.name);
           const qty = getQuantity(item.id);
-          const maxCopies = item.available_copies ?? item.copies;
-          const showStepper = item.copies > 1;
+          const maxCopies = getAvailableCopies(item);
+          const showStepper = config.features.copies && maxCopies > 1;
 
           return (
             <div key={item.id} className="flex items-center gap-3">

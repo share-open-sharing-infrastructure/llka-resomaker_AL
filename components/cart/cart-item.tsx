@@ -12,6 +12,7 @@ interface CartItemProps {
   onRemove: (itemId: string) => void;
   quantity?: number;
   maxQuantity?: number;
+  showStepper?: boolean;
   onQuantityChange?: (qty: number) => void;
 }
 
@@ -19,11 +20,11 @@ function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, "").trim();
 }
 
-export function CartItem({ item, onRemove, quantity = 1, maxQuantity = 1, onQuantityChange }: CartItemProps) {
+export function CartItem({ item, onRemove, quantity = 1, maxQuantity = 1, showStepper: showStepperProp = false, onQuantityChange }: CartItemProps) {
   const imageUrl =
     item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "80x80f") : null;
   const name = stripHtml(item.name);
-  const showStepper = (maxQuantity > 1 || quantity > 1) && !!onQuantityChange;
+  const showStepper = showStepperProp && !!onQuantityChange;
 
   return (
     <div className="flex items-start gap-4 py-4">

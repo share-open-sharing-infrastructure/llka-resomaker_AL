@@ -25,6 +25,10 @@ export function isAvailable(status: ItemStatus): boolean {
   return status === "instock";
 }
 
+export function getAvailableCopies(item: Item): number {
+  return item.available_copies ?? item.copies;
+}
+
 export interface Item {
   id: string;
   iid: number;

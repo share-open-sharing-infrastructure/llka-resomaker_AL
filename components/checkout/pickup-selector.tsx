@@ -15,8 +15,10 @@ import { Label } from "@/components/ui/label";
 import {
   getValidPickupSlots,
   formatPickupDateTime,
+  toOpeningHoursMap,
 } from "@/lib/constants/opening-hours";
 import { useConfig } from "@/context/config-context";
+import { useOpeningHours } from "@/context/opening-hours-context";
 
 interface PickupSelectorProps {
   value: string;
@@ -33,17 +35,19 @@ interface PickupSlot {
 
 export function PickupSelector({ value, onChange, error }: PickupSelectorProps) {
   const config = useConfig();
+  const openingHours = useOpeningHours();
   const weeksAhead = Math.ceil(config.limits.pickupDays / 7);
 
   const slots = useMemo(() => {
-    const rawSlots = getValidPickupSlots(weeksAhead);
+    const map = toOpeningHoursMap(openingHours);
+    const rawSlots = getValidPickupSlots(map, weeksAhead);
     return rawSlots.map((date): PickupSlot => ({
       date,
       dateKey: format(date, "yyyy-MM-dd"),
       timeLabel: format(date, "HH:mm"),
       fullDateTime: formatPickupDateTime(date),
     }));
-  }, [weeksAhead]);
+  }, [openingHours, weeksAhead]);
 
   // Group slots by date
   const slotsByDate = useMemo(() => {

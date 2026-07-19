@@ -1,16 +1,11 @@
-import { config } from "@/lib/config";
+import type { OpeningHoursConfig } from "@/lib/config/types";
 
 export interface OpeningHours {
   open: number;
   close: number;
 }
 
-// Use config hours, filtering out null values
-export const OPENING_HOURS: Record<number, OpeningHours> = Object.fromEntries(
-  Object.entries(config.hours)
-    .filter(([, hours]) => hours !== null)
-    .map(([day, hours]) => [Number(day), hours as OpeningHours])
-);
+export type OpeningHoursMap = Record<number, OpeningHours>;
 
 export const DAY_NAMES: Record<number, string> = {
   0: "Sonntag",
@@ -22,17 +17,28 @@ export const DAY_NAMES: Record<number, string> = {
   6: "Samstag",
 };
 
-export function isOpenDay(dayOfWeek: number): boolean {
-  return dayOfWeek in OPENING_HOURS;
+export function toOpeningHoursMap(hours: OpeningHoursConfig): OpeningHoursMap {
+  return Object.fromEntries(
+    Object.entries(hours)
+      .filter(([, h]) => h !== null)
+      .map(([day, h]) => [Number(day), h as OpeningHours])
+  );
+}
+
+export function isOpenDay(map: OpeningHoursMap, dayOfWeek: number): boolean {
+  return dayOfWeek in map;
 }
 
 export function getOpeningHoursForDay(
+  map: OpeningHoursMap,
   dayOfWeek: number
 ): OpeningHours | undefined {
-  return OPENING_HOURS[dayOfWeek];
+  return map[dayOfWeek];
 }
 
-export function formatOpeningHours(): { day: string; hours: string }[] {
+export function formatOpeningHours(
+  map: OpeningHoursMap
+): { day: string; hours: string }[] {
   const days = [
     { day: "Montag", dayNum: 1 },
     { day: "Dienstag", dayNum: 2 },
@@ -44,7 +50,7 @@ export function formatOpeningHours(): { day: string; hours: string }[] {
   ];
 
   return days.map(({ day, dayNum }) => {
-    const hours = OPENING_HOURS[dayNum];
+    const hours = map[dayNum];
     return {
       day,
       hours: hours
@@ -54,7 +60,10 @@ export function formatOpeningHours(): { day: string; hours: string }[] {
   });
 }
 
-export function getValidPickupSlots(weeksAhead: number = 4): Date[] {
+export function getValidPickupSlots(
+  map: OpeningHoursMap,
+  weeksAhead: number = 4
+): Date[] {
   const slots: Date[] = [];
   const now = new Date();
   const endDate = new Date(
@@ -66,7 +75,7 @@ export function getValidPickupSlots(weeksAhead: number = 4): Date[] {
 
   while (current <= endDate) {
     const dayOfWeek = current.getDay();
-    const hours = OPENING_HOURS[dayOfWeek];
+    const hours = map[dayOfWeek];
 
     if (hours) {
       for (let minutes = hours.open * 60; minutes < hours.close * 60; minutes += 30) {
@@ -83,12 +92,12 @@ export function getValidPickupSlots(weeksAhead: number = 4): Date[] {
   return slots;
 }
 
-export function isValidPickupTime(date: Date): boolean {
+export function isValidPickupTime(map: OpeningHoursMap, date: Date): boolean {
   const now = new Date();
   if (date <= now) return false;
 
   const dayOfWeek = date.getDay();
-  const hours = OPENING_HOURS[dayOfWeek];
+  const hours = map[dayOfWeek];
   if (!hours) return false;
 
   const totalMinutes = date.getHours() * 60 + date.getMinutes();

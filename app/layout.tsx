@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/cart-context";
 import { ConfigProvider } from "@/context/config-context";
+import { OpeningHoursProvider } from "@/context/opening-hours-context";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { CartSheet } from "@/components/cart/cart-sheet";
@@ -40,13 +41,15 @@ export default function RootLayout({
         } as React.CSSProperties}
       >
         <ConfigProvider config={config}>
-          <CartProvider>
-            <Header />
-            <main className="container flex-1 py-8">{children}</main>
-            <Footer />
-            <CartSheet />
-            <Toaster />
-          </CartProvider>
+          <OpeningHoursProvider>
+            <CartProvider>
+              <Header />
+              <main className="container flex-1 py-8">{children}</main>
+              <Footer />
+              <CartSheet />
+              <Toaster />
+            </CartProvider>
+          </OpeningHoursProvider>
         </ConfigProvider>
       </body>
     </html>

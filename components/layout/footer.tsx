@@ -1,8 +1,12 @@
-import { formatOpeningHours } from "@/lib/constants/opening-hours";
+"use client";
+
+import { formatOpeningHours, toOpeningHoursMap } from "@/lib/constants/opening-hours";
 import { config } from "@/lib/config";
+import { useOpeningHours } from "@/context/opening-hours-context";
 
 export function Footer() {
-  const hours = formatOpeningHours();
+  const openingHours = useOpeningHours();
+  const hours = formatOpeningHours(toOpeningHoursMap(openingHours));
 
   return (
     <footer className="border-t bg-muted/40">

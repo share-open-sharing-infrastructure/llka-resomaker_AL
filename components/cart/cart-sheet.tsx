@@ -13,12 +13,13 @@ import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/context/cart-context";
 import { CartItem } from "./cart-item";
 import { useConfig } from "@/context/config-context";
+import { getAvailableCopies } from "@/lib/types/item";
 
 export function CartSheet() {
   const config = useConfig();
-  const { items, isOpen, setIsOpen, removeItem, clearCart } = useCart();
+  const { items, isOpen, setIsOpen, removeItem, clearCart, getQuantity, setQuantity } = useCart();
 
-  const totalDeposit = items.reduce((sum, item) => sum + item.deposit, 0);
+  const totalDeposit = items.reduce((sum, item) => sum + item.deposit * getQuantity(item.id), 0);
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -55,7 +56,15 @@ export function CartSheet() {
             <div className="flex-1 overflow-y-auto px-6">
               <div className="divide-y">
                 {items.map((item) => (
-                  <CartItem key={item.id} item={item} onRemove={removeItem} />
+                  <CartItem
+                    key={item.id}
+                    item={item}
+                    onRemove={removeItem}
+                    quantity={getQuantity(item.id)}
+                    maxQuantity={getAvailableCopies(item)}
+                    showStepper={config.features.copies && getAvailableCopies(item) > 1}
+                    onQuantityChange={(qty) => setQuantity(item.id, qty)}
+                  />
                 ))}
               </div>
             </div>

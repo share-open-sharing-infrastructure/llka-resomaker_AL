@@ -6,7 +6,7 @@ import { Check, Plus } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Item, STATUS_LABELS, isAvailable } from "@/lib/types/item";
+import { Item, STATUS_LABELS, isAvailable, getAvailableCopies } from "@/lib/types/item";
 import { getThumbnailUrl } from "@/lib/api/client";
 import { useCart } from "@/context/cart-context";
 import { useConfig } from "@/context/config-context";
@@ -23,7 +23,9 @@ export function ItemCard({ item }: ItemCardProps) {
   const config = useConfig();
   const { addItem, removeItem, isInCart } = useCart();
   const inCart = isInCart(item.id);
-  const available = isAvailable(item.status);
+  const statusAvailable = isAvailable(item.status);
+  const availableCopies = getAvailableCopies(item);
+  const available = statusAvailable && availableCopies > 0;
   const imageUrl =
     item.images.length > 0 ? getThumbnailUrl(item.id, item.images[0], "512x512f") : null;
 
@@ -64,12 +66,17 @@ export function ItemCard({ item }: ItemCardProps) {
         )}
         {config.features.copies && available && item.copies > 1 && (
           <Badge className="absolute top-2 right-2" variant="secondary">
-            {item.copies}x verfügbar
+            {availableCopies}x verfügbar
           </Badge>
         )}
-        {!available && (
+        {!statusAvailable && (
           <Badge className="absolute top-2 right-2" variant="destructive">
             {STATUS_LABELS[item.status]}
+          </Badge>
+        )}
+        {statusAvailable && !available && (
+          <Badge className="absolute top-2 right-2" variant="destructive">
+            Alle Exemplare ausgeliehen
           </Badge>
         )}
       </div>
@@ -89,7 +96,7 @@ export function ItemCard({ item }: ItemCardProps) {
             Kaution: {item.deposit}{config.display.currency}
           </span>
         )}
-        {available ? (
+        {available || inCart ? (
           <Button
             variant={inCart ? "secondary" : "default"}
             size="sm"

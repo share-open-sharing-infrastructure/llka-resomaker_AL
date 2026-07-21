@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { Check, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Check, Plus, ChevronLeft, ChevronRight, Minus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Item, STATUS_LABELS, isAvailable } from "@/lib/types/item";
+import { Item, STATUS_LABELS, isAvailable, getAvailableCopies } from "@/lib/types/item";
 import { getThumbnailUrl } from "@/lib/api/client";
 import { useCart } from "@/context/cart-context";
 import { useConfig } from "@/context/config-context";
@@ -22,9 +22,13 @@ function stripHtml(html: string): string {
 
 export function ItemDetail({ item }: ItemDetailProps) {
   const config = useConfig();
-  const { addItem, removeItem, isInCart } = useCart();
+  const { addItem, removeItem, isInCart, getQuantity, setQuantity } = useCart();
   const inCart = isInCart(item.id);
-  const available = isAvailable(item.status);
+  const statusAvailable = isAvailable(item.status);
+  const availableCopies = getAvailableCopies(item);
+  const available = statusAvailable && availableCopies > 0;
+  const showQuantitySelector = config.features.copies && availableCopies > 1;
+  const [pendingQuantity, setPendingQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const name = stripHtml(item.name);
@@ -37,8 +41,20 @@ export function ItemDetail({ item }: ItemDetailProps) {
   const handleToggleCart = () => {
     if (inCart) {
       removeItem(item.id);
+      setPendingQuantity(1);
     } else {
-      addItem(item);
+      addItem(item, pendingQuantity);
+    }
+  };
+
+  const cartQuantity = getQuantity(item.id);
+
+  const handleQuantityChange = (delta: number) => {
+    if (inCart) {
+      const next = Math.min(Math.max(1, cartQuantity + delta), availableCopies);
+      setQuantity(item.id, next);
+    } else {
+      setPendingQuantity((prev) => Math.min(Math.max(1, prev + delta), availableCopies));
     }
   };
 
@@ -99,12 +115,20 @@ export function ItemDetail({ item }: ItemDetailProps) {
               #{item.iid}
             </Badge>
           )}
-          {!available && (
+          {!statusAvailable && (
             <Badge
               variant="destructive"
               className="absolute top-4 right-4 text-sm px-3 py-1"
             >
               {STATUS_LABELS[item.status]}
+            </Badge>
+          )}
+          {statusAvailable && !available && (
+            <Badge
+              variant="destructive"
+              className="absolute top-4 right-4 text-sm px-3 py-1"
+            >
+              Alle Exemplare ausgeliehen
             </Badge>
           )}
         </Card>
@@ -167,7 +191,12 @@ export function ItemDetail({ item }: ItemDetailProps) {
           {config.features.copies && item.copies > 0 && (
             <div>
               <p className="text-sm text-muted-foreground">Verfügbare Exemplare</p>
-              <p className="font-medium">{item.copies}</p>
+              <p className="font-medium">
+                {availableCopies}
+                {availableCopies !== item.copies && (
+                  <span className="text-muted-foreground font-normal"> von {item.copies}</span>
+                )}
+              </p>
             </div>
           )}
           {item.parts > 0 && (
@@ -180,6 +209,38 @@ export function ItemDetail({ item }: ItemDetailProps) {
 
         <Separator />
 
+        {available && showQuantitySelector && (
+          <div className="flex items-center gap-3">
+            <p className="text-sm text-muted-foreground">Anzahl Exemplare:</p>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => handleQuantityChange(-1)}
+                disabled={inCart ? cartQuantity <= 1 : pendingQuantity <= 1}
+              >
+                <Minus className="h-3 w-3" />
+              </Button>
+              <span className="w-8 text-center font-medium">
+                {inCart ? cartQuantity : pendingQuantity}
+              </span>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => handleQuantityChange(1)}
+                disabled={inCart ? cartQuantity >= availableCopies : pendingQuantity >= availableCopies}
+              >
+                <Plus className="h-3 w-3" />
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">von {availableCopies}</p>
+          </div>
+        )}
+
         <div className="flex items-center justify-between gap-4">
           {config.features.deposit && item.deposit > 0 && (
             <div>
@@ -188,7 +249,7 @@ export function ItemDetail({ item }: ItemDetailProps) {
             </div>
           )}
 
-          {available ? (
+          {available || inCart ? (
             <Button
               size="lg"
               variant={inCart ? "secondary" : "default"}
@@ -199,6 +260,7 @@ export function ItemDetail({ item }: ItemDetailProps) {
                 <>
                   <Check className="mr-2 h-5 w-5" />
                   Im Ausleihkorb
+                  {showQuantitySelector && cartQuantity > 1 && ` (×${cartQuantity})`}
                 </>
               ) : (
                 <>
@@ -210,7 +272,7 @@ export function ItemDetail({ item }: ItemDetailProps) {
           ) : (
             <div className="text-right">
               <Badge variant="destructive" className="text-base px-4 py-2">
-                {STATUS_LABELS[item.status]}
+                {statusAvailable ? "Alle Exemplare ausgeliehen" : STATUS_LABELS[item.status]}
               </Badge>
               <p className="text-sm text-muted-foreground mt-2">
                 Dieser Gegenstand ist derzeit nicht verfügbar.

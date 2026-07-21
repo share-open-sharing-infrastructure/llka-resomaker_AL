@@ -21,7 +21,7 @@ import { ApiClientError } from "@/lib/api/client";
 
 export function ReservationForm() {
   const router = useRouter();
-  const { items, clearCart } = useCart();
+  const { items, getQuantity, clearCart } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,7 +43,9 @@ export function ReservationForm() {
   const pickupValue = watch("pickup");
 
   const onSubmit = async (data: ReservationFormData) => {
-    if (items.length === 0) {
+    const reservableItems = items.filter((item) => getQuantity(item.id) > 0);
+
+    if (reservableItems.length === 0) {
       setError("Dein Ausleihkorb ist leer.");
       return;
     }
@@ -56,9 +58,12 @@ export function ReservationForm() {
         customer_name: "", // Not collected, backend may handle
         customer_email: data.customer_email,
         customer_phone: "", // Not collected
-        items: items.map((item) => item.id),
+        items: reservableItems.map((item) => item.id),
         pickup: data.pickup,
         comments: data.comments,
+        requested_copies: Object.fromEntries(
+          reservableItems.map((item) => [item.id, getQuantity(item.id)])
+        ),
       });
 
       // Store reservation info for success page
@@ -68,7 +73,7 @@ export function ReservationForm() {
           id: response.id,
           email: data.customer_email,
           pickup: data.pickup,
-          items: items.map((item) => ({
+          items: reservableItems.map((item) => ({
             id: item.id,
             iid: item.iid,
             name: item.name,

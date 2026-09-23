@@ -5,6 +5,7 @@ import type {
   LimitsConfig,
   DefaultsConfig,
   DisplayConfig,
+  LegalConfig,
 } from "./types";
 
 export const DEFAULT_BRAND: BrandConfig = {
@@ -55,3 +56,8 @@ export const DEFAULT_DISPLAY: DisplayConfig = {
 
 export const DEFAULT_HOURS_JSON =
   '{"1":"11:00-15:00"}';
+
+export const DEFAULT_LEGAL: LegalConfig = {
+  termsUrl: "https://commonszentrum.de/leihbedingungen",
+  privacyUrl: "https://commonszentrum.de/datenschutz",
+};

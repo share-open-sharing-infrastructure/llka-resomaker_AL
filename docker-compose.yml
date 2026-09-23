@@ -33,6 +33,10 @@ services:
 
         # Display (optional)
         # NEXT_PUBLIC_DISPLAY_CURRENCY: "€"
+
+        # Legal documents linked from the consent checkboxes during registration
+        # NEXT_PUBLIC_TERMS_URL: "https://example.org/leihbedingungen"
+        # NEXT_PUBLIC_PRIVACY_URL: "https://example.org/datenschutz"
     ports:
       - "3000:3000"
     restart: unless-stopped

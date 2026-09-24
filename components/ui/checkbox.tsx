@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Check } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -7,24 +8,34 @@ import { cn } from "@/lib/utils";
  *
  * Deliberately not the Radix primitive: it would add a dependency, and a native
  * input works directly with react-hook-form's `register()` without a Controller.
+ *
+ * The tick is a real icon layered over the input rather than a background-image
+ * utility — an inline SVG data URI contains spaces, which Tailwind cannot parse
+ * inside an arbitrary value, so that class is silently dropped at build time.
+ *
+ * `className` lands on the wrapper, since that is the element callers position.
  */
 function Checkbox({ className, ...props }: React.ComponentProps<"input">) {
   return (
-    <input
-      type="checkbox"
-      data-slot="checkbox"
-      className={cn(
-        "border-input size-4 shrink-0 cursor-pointer appearance-none rounded-[4px] border bg-transparent shadow-xs transition-[color,box-shadow] outline-none",
-        "checked:bg-primary checked:border-primary",
-        // the tick, drawn as a background image so we need no child element
-        "checked:bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22 fill=%22none%22 stroke=%22white%22 stroke-width=%222.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M3 8.5l3.5 3.5L13 5%22/></svg>')] checked:bg-center checked:bg-no-repeat",
-        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-        "aria-invalid:border-destructive aria-invalid:ring-destructive/20",
-        "disabled:cursor-not-allowed disabled:opacity-50",
-        className
-      )}
-      {...props}
-    />
+    <span className={cn("relative inline-flex size-4 shrink-0", className)}>
+      <input
+        type="checkbox"
+        data-slot="checkbox"
+        className={cn(
+          "peer size-4 shrink-0 cursor-pointer appearance-none rounded-[4px] border bg-transparent shadow-xs outline-none transition-[color,box-shadow]",
+          "border-input checked:border-primary checked:bg-primary",
+          "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+          "aria-invalid:border-destructive aria-invalid:ring-destructive/20",
+          "disabled:cursor-not-allowed disabled:opacity-50"
+        )}
+        {...props}
+      />
+      <Check
+        aria-hidden="true"
+        strokeWidth={3.5}
+        className="pointer-events-none absolute inset-0 size-4 scale-75 text-primary-foreground opacity-0 peer-checked:opacity-100"
+      />
+    </span>
   );
 }
 

@@ -59,5 +59,5 @@ export const DEFAULT_HOURS_JSON =
 
 export const DEFAULT_LEGAL: LegalConfig = {
   termsUrl: "https://commonszentrum.de/index.php/die-bibliothek-der-dinge/leihbedingungen-leihladen/",
-  privacyUrl: "https://commonszentrum.de/datenschutz",
+  privacyUrl: "https://commonszentrum.de/index.php/die-bibliothek-der-dinge/leihbedingungen-leihladen/",
 };

@@ -98,7 +98,7 @@ Format: `"HH:MM-HH:MM"` or omit/null for closed days.
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `NEXT_PUBLIC_TERMS_URL` | `https://commonszentrum.de/index.php/die-bibliothek-der-dinge/leihbedingungen-leihladen/` | Linked from the Leihbedingungen consent checkbox |
-| `NEXT_PUBLIC_PRIVACY_URL` | `https://commonszentrum.de/datenschutz` | Linked from the Datenschutz consent checkbox |
+| `NEXT_PUBLIC_PRIVACY_URL` | `https://commonszentrum.de/index.php/die-bibliothek-der-dinge/leihbedingungen-leihladen/` | Linked from the Datenschutz consent checkbox |
 
 Both are shown to people registering during checkout, who must tick each box
 before they can reserve. Point them at the documents that actually apply to

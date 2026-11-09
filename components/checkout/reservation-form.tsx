@@ -374,7 +374,7 @@ export function ReservationForm() {
                 {...register("signup.accepted_terms")}
               />
               <div className="space-y-1">
-                <Label
+                <label
                   htmlFor="accepted_terms"
                   className="font-normal leading-snug"
                 >

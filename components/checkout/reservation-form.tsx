@@ -404,7 +404,7 @@ export function ReservationForm() {
                 {...register("signup.accepted_privacy")}
               />
               <div className="space-y-1">
-                <Label
+                <label
                   htmlFor="accepted_privacy"
                   className="font-normal leading-snug"
                 >

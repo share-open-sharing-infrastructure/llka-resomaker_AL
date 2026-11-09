@@ -406,7 +406,7 @@ export function ReservationForm() {
               <div className="space-y-1">
                 <label
                   htmlFor="accepted_privacy"
-                  className="font-normal leading-snug"
+                  className="text-sm font-normal leading-snug select-none cursor-pointer"
                 >
                   Ich habe die{" "}
                   <a

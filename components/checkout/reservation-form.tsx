@@ -418,7 +418,7 @@ export function ReservationForm() {
                     Datenschutzerklärung
                   </a>{" "}
                   gelesen.
-                </Label>
+                </label>
                 {signupErrors?.accepted_privacy && (
                   <p className="text-sm text-destructive">
                     {signupErrors.accepted_privacy.message}

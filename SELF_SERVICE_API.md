@@ -109,7 +109,7 @@ fetch('/api/collections/item/records/abc123')
 Submit a new reservation request.
 
 ```
-POST /api/collections/item/records
+POST /api/collections/reservation/records
 ```
 
 **Authentication:** None required (public)
@@ -131,17 +131,62 @@ POST /api/collections/item/records
 **Required Fields:**
 | Field | Type | Description | Validation |
 |-------|------|-------------|------------|
-| `customer_name` | string | Full name | Required |
 | `customer_email` | string | Email address | Required, valid email format |
-| `customer_phone` | string | Phone number | Required, pattern: `^\+?\d{10,}$` |
 | `items` | array | Array of item IDs | Required, at least 1 item |
 | `pickup` | datetime | Pickup date/time | Required, must be in future, within opening hours |
 
 **Optional Fields:**
 | Field | Type | Description |
 |-------|------|-------------|
+| `customer_name` | string | Full name |
+| `customer_phone` | string | Phone number, pattern: `^[0-9\s\+-\/]+$` |
 | `comments` | string | Additional notes |
-| `customer_iid` | number | Existing customer ID (for returning customers) |
+| `requested_copies` | object | `{itemId: count}`, defaults to 1 per item |
+| `signup` | object | Register the person while reserving, see below |
+| `customer_iid` | number | Existing customer ID. **Ignored for unauthenticated requests** – otherwise anyone could attribute a reservation to a stranger. Returning customers are matched by email instead. |
+
+**Registering while reserving (`signup`)**
+
+When `customer_email` does not match an existing customer, the reservation may
+carry the person's own details. The backend then creates the customer record
+atomically with the reservation and links them, so staff need not enter anything
+by hand. If the address *does* belong to someone, `signup` is ignored entirely –
+it can never modify an existing record.
+
+```json
+{
+  "customer_email": "max@example.com",
+  "items": ["item_id_1"],
+  "pickup": "2025-02-15 16:00:00",
+  "signup": {
+    "firstname": "Max",
+    "lastname": "Mustermann",
+    "street": "Kunkelberg",
+    "house_number": "2",
+    "postal_code": "21335",
+    "city": "Lüneburg",
+    "phone": "04131 123456",
+    "heard": "Nachbarschaft",
+    "newsletter": false,
+    "accepted_terms": true,
+    "accepted_privacy": true
+  }
+}
+```
+
+| Field | Required | Notes |
+|-------|----------|-------|
+| `firstname`, `lastname` | yes | |
+| `street`, `house_number`, `postal_code`, `city` | yes | The customer collection requires a full address |
+| `phone` | no | pattern `^[0-9\s\+-\/]+$` |
+| `heard` | no | One of: `Internet`, `Freunde & Bekannte`, `Zeitung / Medien`, `Nachbarschaft`, `Sonstige` |
+| `newsletter` | no | Opt-in only, defaults to false |
+| `accepted_terms` | yes | Must be `true`; stored as proof of consent |
+| `accepted_privacy` | yes | Must be `true` |
+
+The whole request is one transaction: if the reservation fails validation, the
+customer is rolled back and no welcome mail is sent. The member number (`iid`) is
+allocated by the backend – never send one.
 
 **Validation Rules:**
 - All items must have `status='instock'`
@@ -245,6 +290,39 @@ fetch('/api/autocomplete/street?q=karl')
 ```
 
 **Caching:** Response is cached for 1 hour (`Cache-Control: max-age=3600`)
+
+---
+
+### 6. Check Whether an Account Exists
+
+Ask whether an address is already registered, so a returning person can be told
+"we already know you" instead of being asked for their data again.
+
+```
+POST /api/customer/exists
+```
+
+**Authentication:** None required (public)
+
+**Request Body:**
+```json
+{ "email": "max@example.com" }
+```
+
+**Response:**
+```json
+{ "known": true }
+```
+
+The match is case-insensitive. The response contains nothing but the boolean –
+no name, no member number – and is sent with `Cache-Control: no-store`.
+
+**Note:** this is an account-enumeration oracle by design, accepted as the price
+of the UX. It is deliberately a POST so addresses stay out of access logs,
+browser history and `Referer` headers, and it should be covered by a rate-limit
+rule (`POST /api/customer/exists`) in the PocketBase settings. Treat a failure
+as "unknown" on the client and show the signup form rather than blocking the
+reservation.
 
 ---
 

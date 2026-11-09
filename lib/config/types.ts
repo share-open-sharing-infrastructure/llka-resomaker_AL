@@ -51,6 +51,13 @@ export interface ApiConfig {
   base: string;
 }
 
+/** Documents a person must accept when registering. Both are linked from the
+ *  consent checkboxes in the reservation form. */
+export interface LegalConfig {
+  termsUrl: string;
+  privacyUrl: string;
+}
+
 export interface AppConfig {
   brand: BrandConfig;
   meta: MetaConfig;
@@ -60,4 +67,5 @@ export interface AppConfig {
   display: DisplayConfig;
   hours: OpeningHoursConfig;
   api: ApiConfig;
+  legal: LegalConfig;
 }

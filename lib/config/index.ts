@@ -6,6 +6,7 @@ import {
   DEFAULT_DEFAULTS,
   DEFAULT_DISPLAY,
   DEFAULT_HOURS_JSON,
+  DEFAULT_LEGAL,
 } from "./defaults";
 
 function env(key: string, defaultValue: string): string {
@@ -112,5 +113,11 @@ export const config: AppConfig = {
   hours: parseHours(env("HOURS_JSON", DEFAULT_HOURS_JSON)),
   api: {
     base: env("API_BASE", ""),
+  },
+  legal: {
+    // `|| default` rather than a default argument: an env var that is set but
+    // empty would otherwise win and leave the consent checkboxes linking nowhere.
+    termsUrl: env("TERMS_URL", "") || DEFAULT_LEGAL.termsUrl,
+    privacyUrl: env("PRIVACY_URL", "") || DEFAULT_LEGAL.privacyUrl,
   },
 } as const;

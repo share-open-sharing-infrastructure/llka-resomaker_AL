@@ -388,7 +388,7 @@ export function ReservationForm() {
                     Leihbedingungen
                   </a>
                   .
-                </Label>
+                </label>
                 {signupErrors?.accepted_terms && (
                   <p className="text-sm text-destructive">
                     {signupErrors.accepted_terms.message}
